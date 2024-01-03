@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.github</groupId>
-	<artifactId>gabrielfps</artifactId>
+	<artifactId>gabrielStorage</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>vendas</name>
 	<description>Demo project for Spring Boot</description>
