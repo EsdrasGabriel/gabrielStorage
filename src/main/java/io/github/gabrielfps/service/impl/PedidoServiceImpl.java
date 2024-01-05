@@ -6,10 +6,12 @@ import io.github.gabrielfps.domain.entity.Cliente;
 import io.github.gabrielfps.domain.entity.ItemPedido;
 import io.github.gabrielfps.domain.entity.Pedido;
 import io.github.gabrielfps.domain.entity.Produto;
+import io.github.gabrielfps.domain.enums.StatusPedido;
 import io.github.gabrielfps.domain.repository.Clientes;
 import io.github.gabrielfps.domain.repository.ItemsPedidos;
 import io.github.gabrielfps.domain.repository.Pedidos;
 import io.github.gabrielfps.domain.repository.Produtos;
+import io.github.gabrielfps.exception.PedidoNaoEncontradoException;
 import io.github.gabrielfps.exception.RegraNegocioException;
 import io.github.gabrielfps.service.PedidoService;
 import jakarta.transaction.Transactional;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +43,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(pedidoDto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemsPedidos = converterItems(pedido, pedidoDto.getItems());
         pedidosRepository.save(pedido);
@@ -49,7 +52,6 @@ public class PedidoServiceImpl implements PedidoService {
 
         return pedido;
     }
-
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items) {
         if (items.isEmpty()) {
             throw new RegraNegocioException("Não é possível realizar um pedido sem items.");
@@ -66,5 +68,21 @@ public class PedidoServiceImpl implements PedidoService {
             itemPedido.setProduto(produto);
             return itemPedido;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return pedidosRepository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizarStatus(Integer id, StatusPedido statusPedido) {
+        pedidosRepository
+                .findById(id)
+                .map(pedido -> {
+                    pedido.setStatus(statusPedido);
+                    return pedidosRepository.save(pedido);
+                });
     }
 }

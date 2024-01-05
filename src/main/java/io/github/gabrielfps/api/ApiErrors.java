@@ -11,7 +11,11 @@ import java.util.List;
 @Data
 public class ApiErrors {
     private List<String> errors;
-    public ApiErrors(String errors) {
-        this.errors = Collections.singletonList(errors);
+    public ApiErrors(String messageError) {
+        this.errors = Collections.singletonList(messageError);
+    }
+
+    public ApiErrors(List<String> errors) {
+        this.errors = errors;
     }
 }

@@ -2,15 +2,14 @@ package io.github.gabrielfps.api.controller;
 
 import io.github.gabrielfps.domain.entity.Cliente;
 import io.github.gabrielfps.domain.repository.Clientes;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -29,7 +28,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente save(@RequestBody Cliente cliente) {
+    public Cliente save(@RequestBody @Valid Cliente cliente) {
         return clientes.save(cliente);
     }
 
@@ -46,7 +45,7 @@ public class ClienteController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateById(@PathVariable Integer id, @RequestBody Cliente cliente) {
+    public void updateById(@PathVariable Integer id, @RequestBody @Valid Cliente cliente) {
         clientes.findById(id)
             .map(clienteExistente -> {
                 cliente.setId(clienteExistente.getId());
